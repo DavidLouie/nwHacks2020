@@ -1,8 +1,12 @@
 //alert("wakanda");
 
 let cont = document.getElementsByTagName('p');
-var x = $('a[href="/user/garry4321/"]');
-x.style["background-color"] = "red";
+// Put the user name here; Something to keep in mind if a user is politically biased in one comment highlight all the comments from the user
+let userNameElements = document.querySelectorAll("a[href='/user/user_name/']");
+for (userNameElement of userNameElements) {
+    userNameElement.style['background-color'] = "red";
+}
+
 for (elt of cont) {
     //if (elt.toString() === "k") {
     elt.style['background-color'] = setColor(90);
