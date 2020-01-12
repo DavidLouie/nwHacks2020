@@ -94,6 +94,8 @@ function getUserAndCommentsFromArray(arr) {
             });
             result["ispoliticalclass"] = 0;
             console.log(result);
+            requestStuff(result);
+            // console.log(result);
             userAndComments.push({username: item.data.author, comment: item.data.body});
             if (item.data.replies !== undefined && item.data.replies !== '') {
                 getUserAndCommentsFromArray(item.data.replies.data.children);
@@ -113,4 +115,38 @@ function filterUsers(arr) {
    let filteredArray = arr.filter((element) => element.username !== "[deleted]" && element.comment !== "[deleted]");
    console.log(filteredArray);
    return filteredArray;
+}
+
+function requestStuff(result) {
+    let req = require("request");
+
+    const uri = "https://ussouthcentral.services.azureml.net/subscriptions/1b5572c87dd74abb833f99c73e960839/services/8018d8b54f674ec6b80d5fa6e937e0cb/execute?api-version=2.0&format=swagger";
+    const apiKey = "Mn/N/yvAV8VGMdacBjwVySc1gwQHOTSN5bAUMg8X391yfdNnCosc+BkaQTeQ4NYnBMDitNzTVP0fCqry1oN3xA==";
+
+    let data = {
+        "Inputs": {
+            "input1":
+                [result],
+        },
+        "GlobalParameters": {}
+    }
+
+    const options = {
+        uri: uri,
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + apiKey,
+        },
+        body: JSON.stringify(data)
+    }
+
+    req(options, (err, res, body) => {
+        if (!err && res.statusCode == 200) {
+            //var color = setColor(body);
+            console.log(body);
+        } else {
+            console.log("The request failed with status code: " + res.statusCode);
+        }
+    });
 }
