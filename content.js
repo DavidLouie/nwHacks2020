@@ -1,4 +1,4 @@
-//alert("wakanda")
+alert("wakanda");
 highlight('yellow');
 function makeEditableAndHighlight(colour) {
     var range, sel = window.getSelection();
