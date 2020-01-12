@@ -29,62 +29,58 @@ function setColor(p) {
 
 let currentUrl = window.location.href;
 let userAndComments = [];
-var app = {
-    init: function() {
-        if (document.readyState != 'loading') {
-            this.startApp();
-        } else {
-            document.addEventListener('DOMContentLoaded', this.startApp);
-        }
-    },
+init();
 
-    //fetch helpers
-    status: function (response) {
-        if (response.status >= 200 && response.status < 300) {
-            return Promise.resolve(response)
-        } else {
-            return Promise.reject(new Error(response.statusText))
-        }
-    },
-    json: function (response) {
-        return response.json()
-    },
-
-    //Main
-    startApp: function() {
-        //Get Feed
-        fetch(currentUrl + '.json')
-            .then(app.status)
-            .then(app.json)
-            .then(app.getCommentsFromJSON)
-            .catch(function(error) {
-                console.log('request failed', error.message)
-            });
-    },
-
-    getCommentsFromJSON: function(json) {
-        var text = app.getUserAndCommentsFromArray(json[1].data.children);
-
-        return text;
-    },
-
-    //Recursively go through the object tree and compile all the comments
-    getUserAndCommentsFromArray: function(arr) {
-
-        arr.forEach(function(item) {
-            if (item !== undefined && item.data.author !== "[deleted]") {
-                userAndComments.push({username: item.data.author, comment: item.data.body});
-
-                if (item.data.replies !== undefined && item.data.replies !== '') {
-                    app.getUserAndCommentsFromArray(item.data.replies.data.children);
-
-                }
-            }
-        });
-
+function init() {
+    if (document.readyState != 'loading') {
+        loadApp();
+    } else {
+        document.addEventListener('DOMContentLoaded', loadApp());
     }
-};
+}
 
-app.init();
-console.log(userAndComments);
+function status(response) {
+    if (response.status >= 200 && response.status < 300) {
+        return Promise.resolve(response)
+    } else {
+        return Promise.reject(new Error(response.statusText))
+    }
+}
 
+function json(response) {
+    return response.json();
+}
+
+function loadApp() {
+    fetch(currentUrl + '.json')
+        .then((response) => {return status(response)})
+        .then((response) => {return json(response)})
+        .then((json) => {return getCommentsFromJSON(json)})
+        .then((arr) => {return filterUsers(arr)})
+        .catch(function(error) {
+            console.log('request failed', error.message)
+        });
+}
+
+function getCommentsFromJSON(json) {
+    return getUserAndCommentsFromArray(json[1].data.children);
+}
+
+//Recursively go through the object tree and compile all the comments
+function getUserAndCommentsFromArray(arr) {
+    arr.forEach(function(item) {
+        if (item !== undefined) {
+            userAndComments.push({username: item.data.author, comment: item.data.body});
+            if (item.data.replies !== undefined && item.data.replies !== '') {
+                getUserAndCommentsFromArray(item.data.replies.data.children);
+            }
+        }
+    });
+    return userAndComments;
+}
+
+function filterUsers(arr) {
+   let filteredArray = arr.filter((element) => element.username !== "[deleted]" && element.comment !== "[deleted]");
+   console.log(filteredArray);
+   return filteredArray;
+}
