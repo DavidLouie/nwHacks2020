@@ -5,6 +5,13 @@ document.addEventListener("DOMSubtreeModified", function () {
 });
 
 colorized();
+// features = {
+//     "Trump": "0",
+//     "China": "0",
+//     "Iran": "0",
+//     "Crash": "0"
+// };
+const features = ["Trump", "China", "Iran"];
 
 function colorized() {
     let cont = document.querySelectorAll('p');
@@ -70,6 +77,13 @@ function getCommentsFromJSON(json) {
 function getUserAndCommentsFromArray(arr) {
     arr.forEach(function(item) {
         if (item !== undefined) {
+            let result = {};
+            let object = {username: item.data.author, comment: item.data.body};
+            features.forEach(function (feature) {
+                var count = featureOccurrence(feature, object.comment);
+                result[feature] = count.toString();
+            });
+            console.log(result);
             userAndComments.push({username: item.data.author, comment: item.data.body});
             if (item.data.replies !== undefined && item.data.replies !== '') {
                 getUserAndCommentsFromArray(item.data.replies.data.children);
@@ -77,6 +91,12 @@ function getUserAndCommentsFromArray(arr) {
         }
     });
     return userAndComments;
+}
+
+function featureOccurrence(feature, comment) {
+    let featureRex = new RegExp(feature, "g");
+    let matches = comment.match(featureRex);
+    return matches === null ? 0 : matches.length;
 }
 
 function filterUsers(arr) {
