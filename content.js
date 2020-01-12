@@ -5,13 +5,22 @@ document.addEventListener("DOMSubtreeModified", function () {
 });
 
 colorized();
-// features = {
-//     "Trump": "0",
-//     "China": "0",
-//     "Iran": "0",
-//     "Crash": "0"
-// };
-const features = ["Trump", "China", "Iran"];
+
+const features = ["rules", "trump", "banned",	"iran",	"sub",	"posts",
+    "us",	"help",	"check",	"debate",	"offensive",	"bigotry",
+    "guidelines", "improve",	"lsc",	"memes",	"space",	"violate",
+    "downvote",	"news",	"education",	"remember",	"101",	"101style",	"annnouncements",
+    "containing",	"goodfaith",	"phrases",	"rlatestagecapitalism",	"slip",	"socialistanticapitalist",
+    "zerotolerance",	"keep",	"plane", "capitalist",	"details",	"posted",	"rantiwork",
+    "rwherearethechildren",	"subscribe",	"violation",	"violence",	"alive",	"allow",	"reporting",
+    "respect",	"things",	"hate",	"supporters",	"accusations",	"courteous",	"criteria",	"deathphysical",
+    "debatediscussargue",	"insults",	"merits",	"outlet",	"outlets",	"permanent",	"review",	"shill",
+    "troll",	"wishing",	"elsewhere",	"socialism",	"capitalism",	"filter",	"added",	"certain",
+    "hear",	"mike",	"many",	"asktrumpsupporters",	"sitewide",	"others",	"must",	"china",	"partner",	"speech",
+    "way",	"change",	"clarifying",	"climate",	"exceptions",	"helpful",	"info",	"nonsupportersundecided",
+    "participants",	"participating",	"qa",	"find",	"run",	"base",	"imperialism",	"lunch",	"stand",	"users",
+    "advocating",	"harm",
+];
 
 function colorized() {
     let cont = document.querySelectorAll('p');
@@ -83,6 +92,7 @@ function getUserAndCommentsFromArray(arr) {
                 var count = featureOccurrence(feature, object.comment);
                 result[feature] = count.toString();
             });
+            result["ispoliticalclass"] = 0;
             console.log(result);
             userAndComments.push({username: item.data.author, comment: item.data.body});
             if (item.data.replies !== undefined && item.data.replies !== '') {
@@ -94,7 +104,7 @@ function getUserAndCommentsFromArray(arr) {
 }
 
 function featureOccurrence(feature, comment) {
-    let featureRex = new RegExp(feature, "g");
+    let featureRex = new RegExp("\\b" + feature + "\\b", "gi");
     let matches = comment.match(featureRex);
     return matches === null ? 0 : matches.length;
 }
